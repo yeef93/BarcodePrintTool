@@ -11,7 +11,7 @@ namespace BarcodePrintTool
         private static BarTender.Application btApp = new BarTender.Application();
         private static BarTender.Format btFormat = new BarTender.Format();
 
-        string dateTimeNow = DateTime.Now.ToString("dd.MM.yyyy");
+        string dateTimeNow = DateTime.Now.ToString("MM.dd.yyyy");
         string company = "NUSA";
 
         public PrintLabel()
@@ -92,6 +92,7 @@ namespace BarcodePrintTool
             BarcodeTextBox.Enabled = true;
             PrintLabNum.Enabled = true;
             BarcodeTextBox.Clear();
+            BarcodeTextBox.Select();
         }
 
 
