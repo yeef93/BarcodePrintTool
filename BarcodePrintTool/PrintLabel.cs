@@ -1,0 +1,82 @@
+﻿using MaterialSkin.Controls;
+using System;
+using System.Windows.Forms;
+
+namespace BarcodePrintTool
+{
+    public partial class PrintLabel : MaterialForm
+    {
+        private static BarTender.Application btApp = new BarTender.Application();
+        private static BarTender.Format btFormat = new BarTender.Format();
+
+        public PrintLabel()
+        {
+            InitializeComponent();
+        }
+
+        private void PrintLabel_Load(object sender, EventArgs e)
+        {
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+
+            PrintLabNum.Text = "1";
+
+            //Select Printer
+            foreach (string printer in System.Drawing.Printing.PrinterSettings.InstalledPrinters)
+            {
+                InitprinterComboBox.Items.Add(printer);
+            }
+            InitprinterComboBox.SelectedIndex = 0;
+
+        }
+
+        private void PrintLabel_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            btApp.Quit(BarTender.BtSaveOptions.btSaveChanges);
+        }
+
+        private void PrintButton_Click(object sender, EventArgs e)
+        {
+            string sn_string = BarcodeTextBox.Text;
+            string company = NameTextBox.Text;
+            string date = DateTextBox.Text;
+
+            InitprinterComboBox.Enabled = false;
+            BarcodeTextBox.Enabled = false;
+            PrintLabNum.Enabled = false;
+
+            // Determine whether the two SN numbers are equal, if not, generate a barcode and print
+            if (sn_string != string.Empty)
+            {
+                try
+                {
+                    btFormat = btApp.Formats.Open(AppDomain.CurrentDomain.BaseDirectory + "SN.btw", false, "");
+
+                    btFormat.SetNamedSubStringValue("SN", sn_string);
+                    btFormat.SetNamedSubStringValue("COMPANY", company);
+                    btFormat.SetNamedSubStringValue("DATE", date);
+
+                    //printer selected
+                    btFormat.Printer = InitprinterComboBox.Text;
+
+                    //total copies
+                    int CopiesOfLabel = Int32.Parse(this.PrintLabNum.Text.ToString());
+                    btFormat.IdenticalCopiesOfLabel = CopiesOfLabel;
+
+                    btFormat.PrintOut(false, false);
+
+                    //to save the label when exiting
+                    btFormat.Close(BarTender.BtSaveOptions.btSaveChanges);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                    return;
+                }
+            }
+
+            InitprinterComboBox.Enabled = true;
+            BarcodeTextBox.Enabled = true;
+            PrintLabNum.Enabled = true;
+        }
+    }
+}
