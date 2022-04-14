@@ -1,5 +1,7 @@
 ﻿using MaterialSkin.Controls;
 using System;
+using System.Data;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace BarcodePrintTool
@@ -8,6 +10,9 @@ namespace BarcodePrintTool
     {
         private static BarTender.Application btApp = new BarTender.Application();
         private static BarTender.Format btFormat = new BarTender.Format();
+
+        string dateTimeNow = DateTime.Now.ToString("dd.MM.yyyy");
+        string company = "NUSA";
 
         public PrintLabel()
         {
@@ -18,7 +23,11 @@ namespace BarcodePrintTool
         {
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 
+            //icon
+            this.Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);
+
             PrintLabNum.Text = "1";
+            DateTextBox.Text = dateTimeNow;
 
             //Select Printer
             foreach (string printer in System.Drawing.Printing.PrinterSettings.InstalledPrinters)
@@ -27,6 +36,7 @@ namespace BarcodePrintTool
             }
             InitprinterComboBox.SelectedIndex = 0;
 
+            BarcodeTextBox.Select();
         }
 
         private void PrintLabel_FormClosed(object sender, FormClosedEventArgs e)
@@ -36,8 +46,12 @@ namespace BarcodePrintTool
 
         private void PrintButton_Click(object sender, EventArgs e)
         {
+            printLabel();
+        }
+
+        private void printLabel()
+        {
             string sn_string = BarcodeTextBox.Text;
-            string company = NameTextBox.Text;
             string date = DateTextBox.Text;
 
             InitprinterComboBox.Enabled = false;
@@ -77,6 +91,37 @@ namespace BarcodePrintTool
             InitprinterComboBox.Enabled = true;
             BarcodeTextBox.Enabled = true;
             PrintLabNum.Enabled = true;
+            BarcodeTextBox.Clear();
+        }
+
+
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            dateTime.Text = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss");
+        }
+
+        private void BarcodeTextBox_TextChanged(object sender, EventArgs e)
+        {
+            //if (BarcodeTextBox.Text != "")
+            //{
+            //    //if user type alphabet
+            //    if (System.Text.RegularExpressions.Regex.IsMatch(BarcodeTextBox.Text, "[^0-9]"))
+            //    {
+            //        //MessageBox.Show("Please enter only numbers.");
+            //        BarcodeTextBox.Text = BarcodeTextBox.Text.Remove(BarcodeTextBox.Text.Length - 1);
+            //    }
+            //}
+        }
+
+        private void BarcodeTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (BarcodeTextBox.Text != "")
+                {
+                    printLabel();
+                }
+            }                
         }
     }
 }
