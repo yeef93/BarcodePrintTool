@@ -92,6 +92,7 @@ namespace BarcodePrintTool
             this.PrintLabNum.ReadOnly = true;
             this.PrintLabNum.Size = new System.Drawing.Size(514, 32);
             this.PrintLabNum.TabIndex = 3;
+            this.PrintLabNum.Text = "1";
             // 
             // BarcodeTextBox
             // 
